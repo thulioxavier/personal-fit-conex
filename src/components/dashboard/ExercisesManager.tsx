@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -109,7 +108,7 @@ const ExercisesManager = () => {
         
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-lime-400 hover:bg-lime-500 text-black">
+            <Button className="bg-blue-500 hover:bg-blue-600 text-white">
               <Plus size={16} className="mr-2" />
               Adicionar Exercício
             </Button>
@@ -214,7 +213,7 @@ const ExercisesManager = () => {
                 </div>
               </div>
 
-              <Button onClick={handleAddExercise} className="w-full bg-lime-400 hover:bg-lime-500 text-black">
+              <Button onClick={handleAddExercise} className="w-full bg-blue-500 hover:bg-blue-600 text-white">
                 Adicionar Exercício
               </Button>
             </div>
@@ -253,8 +252,8 @@ const ExercisesManager = () => {
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
                 <div className="flex items-start space-x-3 flex-1">
-                  <div className="w-12 h-12 bg-lime-100 rounded-lg flex items-center justify-center">
-                    <Activity size={24} className="text-lime-600" />
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <Activity size={24} className="text-blue-600" />
                   </div>
                   <div className="flex-1">
                     <CardTitle className="text-lg leading-tight">{exercise.name}</CardTitle>
@@ -284,7 +283,7 @@ const ExercisesManager = () => {
               </div>
 
               {exercise.videoUrl && (
-                <div className="flex items-center text-sm text-lime-600 mb-3">
+                <div className="flex items-center text-sm text-blue-600 mb-3">
                   <Play size={14} className="mr-1" />
                   <span>Vídeo disponível</span>
                 </div>

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Search, Edit, Trash2, Dumbbell, Users, Calendar } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Dumbbell, Users, Calendar, User } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -11,8 +11,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import WorkoutBuilder from './WorkoutBuilder';
 
 const WorkoutsManager = () => {
   const [workouts, setWorkouts] = useState([
@@ -42,34 +42,50 @@ const WorkoutsManager = () => {
     },
   ]);
 
+  const [students] = useState([
+    { id: 1, name: 'João Silva', email: 'joao@email.com' },
+    { id: 2, name: 'Maria Santos', email: 'maria@email.com' },
+    { id: 3, name: 'Carlos Lima', email: 'carlos@email.com' },
+    { id: 4, name: 'Ana Costa', email: 'ana@email.com' },
+  ]);
+
   const [searchTerm, setSearchTerm] = useState('');
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [newWorkout, setNewWorkout] = useState({
-    name: '',
-    description: '',
-  });
+  const [isBuilderOpen, setIsBuilderOpen] = useState(false);
+  const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
+  const [selectedWorkout, setSelectedWorkout] = useState<any>(null);
+  const [selectedStudents, setSelectedStudents] = useState<number[]>([]);
 
   const filteredWorkouts = workouts.filter(workout =>
     workout.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     workout.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleAddWorkout = () => {
-    if (newWorkout.name && newWorkout.description) {
-      setWorkouts([...workouts, {
-        id: workouts.length + 1,
-        ...newWorkout,
-        exercises: 0,
-        assignedStudents: 0,
-        createdDate: new Date().toISOString().split('T')[0],
-      }]);
-      setNewWorkout({ name: '', description: '' });
-      setIsAddDialogOpen(false);
-    }
+  const handleSaveWorkout = (newWorkout: any) => {
+    setWorkouts([...workouts, {
+      id: workouts.length + 1,
+      ...newWorkout,
+      exercises: newWorkout.exercises.length,
+      assignedStudents: 0,
+      createdDate: new Date().toISOString().split('T')[0],
+    }]);
   };
 
   const handleDeleteWorkout = (id: number) => {
     setWorkouts(workouts.filter(workout => workout.id !== id));
+  };
+
+  const handleAssignWorkout = (workout: any) => {
+    setSelectedWorkout(workout);
+    setIsAssignDialogOpen(true);
+  };
+
+  const handleConfirmAssignment = () => {
+    if (selectedWorkout && selectedStudents.length > 0) {
+      console.log(`Atribuindo treino ${selectedWorkout.name} para ${selectedStudents.length} alunos`);
+      setIsAssignDialogOpen(false);
+      setSelectedStudents([]);
+      setSelectedWorkout(null);
+    }
   };
 
   return (
@@ -81,43 +97,13 @@ const WorkoutsManager = () => {
           <p className="text-gray-600">Crie e organize treinos para seus alunos</p>
         </div>
         
-        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-lime-400 hover:bg-lime-500 text-black">
-              <Plus size={16} className="mr-2" />
-              Criar Treino
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="bg-white">
-            <DialogHeader>
-              <DialogTitle>Criar Novo Treino</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="workoutName">Nome do treino</Label>
-                <Input
-                  id="workoutName"
-                  value={newWorkout.name}
-                  onChange={(e) => setNewWorkout({...newWorkout, name: e.target.value})}
-                  placeholder="Ex: Treino A - Peito, Ombro, Tríceps"
-                />
-              </div>
-              <div>
-                <Label htmlFor="workoutDescription">Descrição</Label>
-                <Textarea
-                  id="workoutDescription"
-                  value={newWorkout.description}
-                  onChange={(e) => setNewWorkout({...newWorkout, description: e.target.value})}
-                  placeholder="Descreva o objetivo e foco do treino"
-                  rows={3}
-                />
-              </div>
-              <Button onClick={handleAddWorkout} className="w-full bg-lime-400 hover:bg-lime-500 text-black">
-                Criar Treino
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <Button 
+          onClick={() => setIsBuilderOpen(true)}
+          className="bg-blue-500 hover:bg-blue-600 text-white"
+        >
+          <Plus size={16} className="mr-2" />
+          Criar Treino
+        </Button>
       </div>
 
       {/* Search */}
@@ -140,8 +126,8 @@ const WorkoutsManager = () => {
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
                 <div className="flex items-start space-x-3">
-                  <div className="w-12 h-12 bg-lime-100 rounded-lg flex items-center justify-center">
-                    <Dumbbell size={24} className="text-lime-600" />
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <Dumbbell size={24} className="text-blue-600" />
                   </div>
                   <div>
                     <CardTitle className="text-lg leading-tight">{workout.name}</CardTitle>
@@ -181,6 +167,15 @@ const WorkoutsManager = () => {
                 </Button>
                 <Button 
                   variant="outline" 
+                  size="sm"
+                  onClick={() => handleAssignWorkout(workout)}
+                  className="text-blue-600 hover:text-blue-700"
+                >
+                  <User size={14} className="mr-1" />
+                  Atribuir
+                </Button>
+                <Button 
+                  variant="outline" 
                   size="sm" 
                   onClick={() => handleDeleteWorkout(workout.id)}
                   className="text-red-600 hover:text-red-700"
@@ -202,6 +197,62 @@ const WorkoutsManager = () => {
           </p>
         </div>
       )}
+
+      {/* Workout Builder */}
+      <WorkoutBuilder
+        isOpen={isBuilderOpen}
+        onClose={() => setIsBuilderOpen(false)}
+        onSave={handleSaveWorkout}
+      />
+
+      {/* Assign Workout Dialog */}
+      <Dialog open={isAssignDialogOpen} onOpenChange={setIsAssignDialogOpen}>
+        <DialogContent className="bg-white">
+          <DialogHeader>
+            <DialogTitle>Atribuir Treino: {selectedWorkout?.name}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-gray-600">Selecione os alunos para atribuir este treino:</p>
+            
+            <div className="space-y-2 max-h-64 overflow-y-auto">
+              {students.map((student) => (
+                <div key={student.id} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded">
+                  <input
+                    type="checkbox"
+                    id={`student-${student.id}`}
+                    checked={selectedStudents.includes(student.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedStudents([...selectedStudents, student.id]);
+                      } else {
+                        setSelectedStudents(selectedStudents.filter(id => id !== student.id));
+                      }
+                    }}
+                    className="rounded border-gray-300"
+                  />
+                  <label htmlFor={`student-${student.id}`} className="flex-1 cursor-pointer">
+                    <div className="font-medium">{student.name}</div>
+                    <div className="text-sm text-gray-500">{student.email}</div>
+                  </label>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setIsAssignDialogOpen(false)}>
+                Cancelar
+              </Button>
+              <Button 
+                onClick={handleConfirmAssignment}
+                className="bg-blue-500 hover:bg-blue-600 text-white"
+                disabled={selectedStudents.length === 0}
+              >
+                Atribuir ({selectedStudents.length})
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

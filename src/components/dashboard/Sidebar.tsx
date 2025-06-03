@@ -1,5 +1,5 @@
 
-import { Home, Users, Dumbbell, Activity, Settings, Menu } from 'lucide-react';
+import { Home, Users, Dumbbell, Activity, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface SidebarProps {
@@ -21,7 +21,6 @@ const Sidebar = ({ userType, activeSection, onSectionChange, isOpen }: SidebarPr
 
   const studentMenuItems = [
     { id: 'dashboard', label: 'Meus Treinos', icon: Home },
-    { id: 'progress', label: 'Progresso', icon: Activity },
     { id: 'settings', label: 'Configurações', icon: Settings },
   ];
 
@@ -35,7 +34,7 @@ const Sidebar = ({ userType, activeSection, onSectionChange, isOpen }: SidebarPr
       )}>
         <div className="flex items-center justify-between p-4 border-b">
           <div className="flex items-center">
-            <div className="w-8 h-8 bg-lime-400 rounded-full flex items-center justify-center text-black font-bold text-sm mr-3">
+            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm mr-3">
               F
             </div>
             <span className="font-semibold text-gray-900">FitnessPro</span>
@@ -57,7 +56,7 @@ const Sidebar = ({ userType, activeSection, onSectionChange, isOpen }: SidebarPr
                 className={cn(
                   "w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors",
                   activeSection === item.id
-                    ? "bg-lime-100 text-lime-700"
+                    ? "bg-blue-100 text-blue-700"
                     : "text-gray-700 hover:bg-gray-100"
                 )}
               >

@@ -62,12 +62,14 @@ const Header = ({ user, onLogout, onMenuToggle }: HeaderProps) => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center space-x-2 hover:bg-gray-100">
-                <div className="w-8 h-8 bg-lime-400 rounded-full flex items-center justify-center">
-                  <User size={16} className="text-black" />
+                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                  <User size={16} className="text-white" />
                 </div>
                 <div className="hidden sm:block text-left">
                   <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                  <p className="text-xs text-gray-500">{user.email}</p>
+                  <p className="text-xs text-gray-500">
+                    {user.type === 'personal' ? 'Personal Trainer' : 'Aluno'}
+                  </p>
                 </div>
               </Button>
             </DropdownMenuTrigger>
