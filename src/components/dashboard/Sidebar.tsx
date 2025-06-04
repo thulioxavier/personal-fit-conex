@@ -33,50 +33,50 @@ const Sidebar = ({ userType, activeSection, onSectionChange, isOpen }: SidebarPr
   return (
     <>
       <div className={cn(
-        "fixed inset-y-0 left-0 z-50 w-72 bg-gradient-to-b from-primary to-primary/90 shadow-2xl transform transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0",
+        "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 shadow-sm transform transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
-        <div className="flex items-center justify-center p-6 border-b border-white/20">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
-              <Dumbbell className="w-6 h-6 text-primary" />
+        {/* Logo */}
+        <div className="flex items-center px-6 py-4 border-b border-slate-200">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+              <Dumbbell className="w-5 h-5 text-white" />
             </div>
-            <div className="text-white">
-              <h1 className="text-xl font-bold">FitnessPro</h1>
-              <p className="text-xs text-white/80">
+            <div>
+              <h1 className="text-lg font-bold text-slate-900">FitnessPro</h1>
+              <p className="text-xs text-slate-500">
                 {userType === 'personal' ? 'Personal Trainer' : 'Área do Aluno'}
               </p>
             </div>
           </div>
         </div>
 
-        <nav className="mt-8 px-4">
-          <div className="space-y-2">
+        {/* Navigation */}
+        <nav className="p-4">
+          <div className="space-y-1">
             {menuItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => onSectionChange(item.id)}
                 className={cn(
-                  "w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group",
+                  "w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200",
                   activeSection === item.id
-                    ? "bg-white text-primary shadow-lg transform scale-105"
-                    : "text-white/90 hover:bg-white/10 hover:text-white hover:transform hover:scale-105"
+                    ? "bg-primary text-white shadow-sm"
+                    : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
                 )}
               >
-                <item.icon size={20} className={cn(
-                  "mr-3 transition-colors",
-                  activeSection === item.id ? "text-primary" : "text-white/80 group-hover:text-white"
-                )} />
+                <item.icon size={18} className="mr-3" />
                 {item.label}
               </button>
             ))}
           </div>
         </nav>
 
+        {/* Footer */}
         <div className="absolute bottom-0 left-0 right-0 p-4">
-          <div className="bg-white/10 rounded-xl p-4 text-center">
-            <p className="text-white/80 text-xs">
-              Versão 2.0.1
+          <div className="bg-slate-50 rounded-lg p-3 text-center border border-slate-200">
+            <p className="text-slate-600 text-xs font-medium">
+              Versão 2.1.0
             </p>
           </div>
         </div>

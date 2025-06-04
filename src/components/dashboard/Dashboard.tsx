@@ -41,8 +41,8 @@ const Dashboard = ({ user, onLogout }: DashboardProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="flex w-full">
+    <div className="min-h-screen bg-slate-50">
+      <div className="flex h-screen">
         <Sidebar 
           userType={user.type}
           activeSection={activeSection}
@@ -54,16 +54,18 @@ const Dashboard = ({ user, onLogout }: DashboardProps) => {
           onToggle={() => setSidebarOpen(!sidebarOpen)}
         />
         
-        <div className="flex-1 lg:ml-72 min-h-screen">
+        <div className="flex-1 flex flex-col min-w-0 lg:ml-64">
           <Header 
             user={user}
             onLogout={onLogout}
             onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
           />
           
-          <main className="p-4 lg:p-8 max-w-7xl mx-auto">
-            <div className="animate-fade-in">
-              {renderContent()}
+          <main className="flex-1 overflow-auto">
+            <div className="p-4 lg:p-6 max-w-7xl mx-auto">
+              <div className="animate-fade-in">
+                {renderContent()}
+              </div>
             </div>
           </main>
         </div>
@@ -72,7 +74,7 @@ const Dashboard = ({ user, onLogout }: DashboardProps) => {
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm"
+          className="fixed inset-0 bg-black/20 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}

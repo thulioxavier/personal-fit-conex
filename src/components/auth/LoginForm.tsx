@@ -1,140 +1,105 @@
 
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Eye, EyeOff, ArrowLeft, Mail } from 'lucide-react';
+import { Dumbbell, User, UserCheck } from 'lucide-react';
 
 interface LoginFormProps {
-  onLogin: (user: { id: string; name: string; email: string; type: 'personal' | 'student' }) => void;
+  onLogin: (userData: { id: string; name: string; email: string; type: 'personal' | 'student' }) => void;
 }
 
 const LoginForm = ({ onLogin }: LoginFormProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+  const [userType, setUserType] = useState<'personal' | 'student'>('personal');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Mock login - determine user type based on email
-    const userType = email.includes('personal') ? 'personal' : 'student';
-    const userName = userType === 'personal' ? 'Personal Trainer' : 'Aluno';
-    
     onLogin({
       id: '1',
-      name: userName,
-      email,
-      type: userType
+      name: userType === 'personal' ? 'Personal Trainer' : 'Aluno Teste',
+      email: email || (userType === 'personal' ? 'personal@teste.com' : 'aluno@teste.com'),
+      type: userType,
     });
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <button className="flex items-center text-gray-600 hover:text-gray-800">
-            <ArrowLeft size={20} className="mr-2" />
-            Voltar ao início
-          </button>
-          <div className="flex items-center">
-            <div className="w-8 h-8 bg-lime-400 rounded-full flex items-center justify-center text-black font-bold text-sm mr-2">
-              C
-            </div>
-            <span className="font-semibold text-gray-900">FitnessPro</span>
-          </div>
-        </div>
-
-        {/* Welcome Message */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Bem-vindo de volta!</h1>
-          <p className="text-gray-600">Entre na sua conta para continuar</p>
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-primary rounded-2xl mb-4 shadow-lg">
+            <Dumbbell className="w-10 h-10 text-white" />
+          </div>
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">FitnessPro</h1>
+          <p className="text-slate-600">Sistema de Gestão de Treinos</p>
         </div>
 
-        {/* Login Form */}
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-xl font-semibold">Fazer Login</CardTitle>
-            <p className="text-sm text-gray-600">Digite suas credenciais para acessar sua conta</p>
+        <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+          <CardHeader className="text-center pb-4">
+            <CardTitle className="text-xl text-slate-900">Fazer Login</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Label htmlFor="email">Email</Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+              <div className="grid grid-cols-2 gap-3 mb-6">
+                <Button
+                  type="button"
+                  variant={userType === 'personal' ? 'default' : 'outline'}
+                  onClick={() => setUserType('personal')}
+                  className="flex items-center justify-center gap-2 h-12"
+                >
+                  <UserCheck size={18} />
+                  Personal
+                </Button>
+                <Button
+                  type="button"
+                  variant={userType === 'student' ? 'default' : 'outline'}
+                  onClick={() => setUserType('student')}
+                  className="flex items-center justify-center gap-2 h-12"
+                >
+                  <User size={18} />
+                  Aluno
+                </Button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="email">Email</Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="seu@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10"
-                    required
+                    placeholder="seu@email.com"
+                    className="h-11"
                   />
                 </div>
-              </div>
-
-              <div>
-                <Label htmlFor="password">Senha</Label>
-                <div className="relative">
+                <div>
+                  <Label htmlFor="password">Senha</Label>
                   <Input
                     id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="Sua senha"
+                    type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pr-10"
-                    required
+                    placeholder="Sua senha"
+                    className="h-11"
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="remember"
-                    checked={rememberMe}
-                    onCheckedChange={(checked) => setRememberMe(checked as boolean)}
-                  />
-                  <Label htmlFor="remember" className="text-sm">Lembrar de mim</Label>
-                </div>
-                <button type="button" className="text-sm text-gray-600 hover:text-gray-800">
-                  Esqueceu a senha?
-                </button>
-              </div>
-
-              <Button type="submit" className="w-full bg-lime-400 hover:bg-lime-500 text-black font-medium">
+              <Button type="submit" className="w-full h-11 bg-primary hover:bg-primary/90 text-white font-medium">
                 Entrar
               </Button>
-
-              <div className="text-center text-sm text-gray-600">
-                Não tem uma conta?{' '}
-                <button type="button" className="text-lime-600 hover:text-lime-700 font-medium">
-                  Cadastre-se aqui
-                </button>
-              </div>
             </form>
-
-            {/* Demo Info */}
-            <div className="mt-6 p-3 bg-gray-50 rounded-lg">
-              <p className="text-xs text-gray-600 mb-2">Para testar:</p>
-              <p className="text-xs text-gray-600">• Personal: personal@teste.com</p>
-              <p className="text-xs text-gray-600">• Aluno: aluno@teste.com</p>
-            </div>
           </CardContent>
         </Card>
+
+        <div className="text-center mt-6">
+          <p className="text-sm text-slate-500">
+            Para teste: use qualquer email/senha
+          </p>
+        </div>
       </div>
     </div>
   );
