@@ -19,24 +19,24 @@ interface HeaderProps {
 
 const Header = ({ user, onLogout, onMenuToggle }: HeaderProps) => {
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-40 backdrop-blur-sm">
-      <div className="flex items-center justify-between px-4 lg:px-6 py-3">
+    <header className="bg-white border-b border-gray-200 sticky top-0 z-40 backdrop-blur-sm">
+      <div className="flex items-center justify-between px-6 py-4">
         {/* Left side */}
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
             size="sm"
             onClick={onMenuToggle}
-            className="lg:hidden hover:bg-slate-100"
+            className="lg:hidden hover:bg-gray-100"
           >
             <Menu size={20} />
           </Button>
           
           <div className="hidden md:flex items-center relative max-w-sm">
-            <Search size={16} className="absolute left-3 text-slate-400" />
+            <Search size={16} className="absolute left-3 text-gray-400" />
             <Input
               placeholder="Buscar..."
-              className="pl-9 h-9 bg-slate-50 border-slate-200 focus:bg-white text-sm"
+              className="pl-9 h-9 bg-gray-50 border-gray-200 focus:bg-white text-sm"
             />
           </div>
         </div>
@@ -46,30 +46,30 @@ const Header = ({ user, onLogout, onMenuToggle }: HeaderProps) => {
           <div className="hidden xl:flex items-center gap-8">
             <div className="text-center">
               <p className="text-2xl font-bold text-primary">15</p>
-              <p className="text-xs text-slate-500 font-medium">Alunos</p>
+              <p className="text-xs text-gray-500 font-medium">Alunos</p>
             </div>
-            <div className="w-px h-8 bg-slate-200" />
+            <div className="w-px h-8 bg-gray-200" />
             <div className="text-center">
               <p className="text-2xl font-bold text-emerald-600">8</p>
-              <p className="text-xs text-slate-500 font-medium">Treinos</p>
+              <p className="text-xs text-gray-500 font-medium">Treinos</p>
             </div>
-            <div className="w-px h-8 bg-slate-200" />
+            <div className="w-px h-8 bg-gray-200" />
             <div className="text-center">
               <p className="text-2xl font-bold text-orange-500">92%</p>
-              <p className="text-xs text-slate-500 font-medium">Sucesso</p>
+              <p className="text-xs text-gray-500 font-medium">Sucesso</p>
             </div>
           </div>
         )}
 
         {/* Right side */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {/* Mobile search */}
-          <Button variant="ghost" size="sm" className="md:hidden hover:bg-slate-100">
+          <Button variant="ghost" size="sm" className="md:hidden hover:bg-gray-100">
             <Search size={18} />
           </Button>
 
           {/* Notifications */}
-          <Button variant="ghost" size="sm" className="relative hover:bg-slate-100">
+          <Button variant="ghost" size="sm" className="relative hover:bg-gray-100">
             <Bell size={18} />
             <Badge className="absolute -top-1 -right-1 w-5 h-5 p-0 bg-red-500 text-xs border-white">
               3
@@ -77,20 +77,20 @@ const Header = ({ user, onLogout, onMenuToggle }: HeaderProps) => {
           </Button>
 
           {/* Settings - Hidden on small screens */}
-          <Button variant="ghost" size="sm" className="hidden sm:flex hover:bg-slate-100">
+          <Button variant="ghost" size="sm" className="hidden sm:flex hover:bg-gray-100">
             <Settings size={18} />
           </Button>
 
           {/* User Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex items-center gap-3 hover:bg-slate-100 px-3 py-2 h-auto">
+              <Button variant="ghost" className="flex items-center gap-3 hover:bg-gray-100 px-3 py-2 h-auto">
                 <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                   <User size={16} className="text-white" />
                 </div>
                 <div className="hidden sm:block text-left">
-                  <p className="text-sm font-medium text-slate-900">{user.name}</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-sm font-medium text-gray-900">{user.name}</p>
+                  <p className="text-xs text-gray-500">
                     {user.type === 'personal' ? 'Personal Trainer' : 'Aluno'}
                   </p>
                 </div>
@@ -99,14 +99,14 @@ const Header = ({ user, onLogout, onMenuToggle }: HeaderProps) => {
             <DropdownMenuContent align="end" className="w-56 bg-white">
               <div className="px-3 py-2">
                 <p className="text-sm font-medium">{user.name}</p>
-                <p className="text-xs text-slate-500">{user.email}</p>
+                <p className="text-xs text-gray-500">{user.email}</p>
               </div>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="hover:bg-slate-50">
+              <DropdownMenuItem className="hover:bg-gray-50">
                 <User size={16} className="mr-2" />
                 Perfil
               </DropdownMenuItem>
-              <DropdownMenuItem className="hover:bg-slate-50">
+              <DropdownMenuItem className="hover:bg-gray-50">
                 <Settings size={16} className="mr-2" />
                 Configurações
               </DropdownMenuItem>

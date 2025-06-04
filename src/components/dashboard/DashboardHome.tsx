@@ -1,8 +1,9 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Users, Dumbbell, TrendingUp, Activity, Plus, Eye, BarChart3, User, Play, Clock, Target } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useState } from 'react';
+import WorkoutDetails from './WorkoutDetails';
 
 interface DashboardHomeProps {
   user: { id: string; name: string; email: string; type: 'personal' | 'student' };
@@ -177,46 +178,97 @@ const PersonalDashboard = ({ user }: { user: any }) => {
 };
 
 const StudentDashboard = ({ user }: { user: any }) => {
+  const [selectedWorkout, setSelectedWorkout] = useState<any>(null);
+  const [isWorkoutDetailsOpen, setIsWorkoutDetailsOpen] = useState(false);
+
   const myWorkouts = [
     {
       id: 1,
       name: 'Treino A - Peito, Ombro, Tríceps',
-      exercises: 8,
+      description: 'Treino focado no desenvolvimento da parte superior do corpo',
+      totalExercises: 8,
       duration: '45 min',
       difficulty: 'Intermediário',
       completed: false,
       progress: 0,
-      nextExercise: 'Supino Reto'
+      nextExercise: 'Supino Reto',
+      exercises: [
+        { id: 1, name: 'Supino Reto', sets: 4, reps: '8-12', weight: '80kg', rest: '90s', completed: false },
+        { id: 2, name: 'Supino Inclinado', sets: 3, reps: '10-12', weight: '70kg', rest: '60s', completed: false },
+        { id: 3, name: 'Desenvolvimento com Halteres', sets: 3, reps: '12-15', weight: '20kg', rest: '60s', completed: false },
+        { id: 4, name: 'Elevação Lateral', sets: 3, reps: '12-15', weight: '12kg', rest: '45s', completed: false },
+        { id: 5, name: 'Tríceps Pulley', sets: 3, reps: '12-15', rest: '45s', completed: false },
+        { id: 6, name: 'Tríceps Francês', sets: 3, reps: '10-12', weight: '30kg', rest: '60s', completed: false },
+        { id: 7, name: 'Flexão de Braço', sets: 2, reps: '15-20', rest: '45s', completed: false },
+        { id: 8, name: 'Abdominal Supra', sets: 3, reps: '20', rest: '30s', completed: false }
+      ]
     },
     {
       id: 2,
       name: 'Treino B - Costas, Bíceps',
-      exercises: 6,
+      description: 'Fortalecimento das costas e braços',
+      totalExercises: 6,
       duration: '40 min',
       difficulty: 'Intermediário',
       completed: true,
       progress: 100,
-      lastCompleted: 'Ontem'
+      lastCompleted: 'Ontem',
+      exercises: [
+        { id: 1, name: 'Puxada Frontal', sets: 4, reps: '8-12', weight: '70kg', rest: '90s', completed: true },
+        { id: 2, name: 'Remada Curvada', sets: 3, reps: '10-12', weight: '60kg', rest: '60s', completed: true },
+        { id: 3, name: 'Pulley Costas', sets: 3, reps: '12-15', weight: '50kg', rest: '60s', completed: true },
+        { id: 4, name: 'Rosca Direta', sets: 3, reps: '12-15', weight: '15kg', rest: '45s', completed: true },
+        { id: 5, name: 'Rosca Martelo', sets: 3, reps: '12-15', weight: '12kg', rest: '45s', completed: true },
+        { id: 6, name: 'Rosca Concentrada', sets: 2, reps: '12-15', weight: '10kg', rest: '45s', completed: true }
+      ]
     },
     {
       id: 3,
       name: 'Treino C - Pernas, Glúteos',
-      exercises: 10,
+      description: 'Treino completo para membros inferiores',
+      totalExercises: 10,
       duration: '50 min',
       difficulty: 'Avançado',
       completed: false,
       progress: 60,
-      nextExercise: 'Agachamento Livre'
+      nextExercise: 'Agachamento Livre',
+      exercises: [
+        { id: 1, name: 'Agachamento Livre', sets: 4, reps: '8-12', weight: '100kg', rest: '2min', completed: true },
+        { id: 2, name: 'Leg Press', sets: 3, reps: '12-15', weight: '200kg', rest: '90s', completed: true },
+        { id: 3, name: 'Stiff', sets: 3, reps: '10-12', weight: '60kg', rest: '60s', completed: true },
+        { id: 4, name: 'Cadeira Extensora', sets: 3, reps: '12-15', weight: '50kg', rest: '45s', completed: true },
+        { id: 5, name: 'Mesa Flexora', sets: 3, reps: '12-15', weight: '40kg', rest: '45s', completed: true },
+        { id: 6, name: 'Elevação Pélvica', sets: 3, reps: '15-20', rest: '45s', completed: true },
+        { id: 7, name: 'Panturrilha em Pé', sets: 4, reps: '15-20', weight: '80kg', rest: '45s', completed: false },
+        { id: 8, name: 'Panturrilha Sentada', sets: 3, reps: '15-20', weight: '60kg', rest: '45s', completed: false },
+        { id: 9, name: 'Abdução de Quadril', sets: 3, reps: '15-20', weight: '30kg', rest: '45s', completed: false },
+        { id: 10, name: 'Prancha', sets: 3, reps: '30-60s', rest: '60s', completed: false }
+      ]
     },
     {
       id: 4,
       name: 'Treino D - Cardio e Core',
-      exercises: 12,
+      description: 'Treino cardiovascular e fortalecimento do core',
+      totalExercises: 12,
       duration: '35 min',
       difficulty: 'Iniciante',
       completed: false,
       progress: 25,
-      nextExercise: 'Esteira'
+      nextExercise: 'Esteira',
+      exercises: [
+        { id: 1, name: 'Esteira', sets: 1, reps: '10 min', rest: '0s', completed: true },
+        { id: 2, name: 'Bicicleta Ergométrica', sets: 1, reps: '8 min', rest: '0s', completed: true },
+        { id: 3, name: 'Elíptico', sets: 1, reps: '5 min', rest: '0s', completed: true },
+        { id: 4, name: 'Abdominal Supra', sets: 3, reps: '20', rest: '30s', completed: false },
+        { id: 5, name: 'Prancha Frontal', sets: 3, reps: '30s', rest: '30s', completed: false },
+        { id: 6, name: 'Prancha Lateral', sets: 2, reps: '20s cada lado', rest: '30s', completed: false },
+        { id: 7, name: 'Mountain Climber', sets: 3, reps: '20', rest: '30s', completed: false },
+        { id: 8, name: 'Burpee', sets: 2, reps: '10', rest: '60s', completed: false },
+        { id: 9, name: 'Jumping Jack', sets: 3, reps: '30s', rest: '30s', completed: false },
+        { id: 10, name: 'Polichinelo', sets: 2, reps: '20', rest: '30s', completed: false },
+        { id: 11, name: 'Agachamento Livre', sets: 3, reps: '15', rest: '45s', completed: false },
+        { id: 12, name: 'Alongamento', sets: 1, reps: '5 min', rest: '0s', completed: false }
+      ]
     },
   ];
 
@@ -225,6 +277,11 @@ const StudentDashboard = ({ user }: { user: any }) => {
     { label: 'Tempo Total', value: '3h 20min', color: 'text-blue-600' },
     { label: 'Calorias Queimadas', value: '1,240', color: 'text-orange-600' },
   ];
+
+  const handleViewWorkout = (workout: any) => {
+    setSelectedWorkout(workout);
+    setIsWorkoutDetailsOpen(true);
+  };
 
   return (
     <div className="space-y-8">
@@ -277,7 +334,7 @@ const StudentDashboard = ({ user }: { user: any }) => {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="flex items-center space-x-2">
                     <Activity size={16} className="text-gray-400" />
-                    <span>{workout.exercises} exercícios</span>
+                    <span>{workout.totalExercises} exercícios</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Clock size={16} className="text-gray-400" />
@@ -311,22 +368,41 @@ const StudentDashboard = ({ user }: { user: any }) => {
                   </div>
                 )}
 
-                <Button 
-                  className={`w-full transition-all duration-200 ${
-                    workout.completed 
-                      ? 'bg-green-500 hover:bg-green-600' 
-                      : workout.progress > 0
-                      ? 'bg-blue-500 hover:bg-blue-600'
-                      : 'bg-primary hover:bg-primary/90'
-                  } text-white shadow-lg`}
-                >
-                  {workout.completed ? 'Ver Detalhes' : workout.progress > 0 ? 'Continuar Treino' : 'Iniciar Treino'}
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={() => handleViewWorkout(workout)}
+                    variant="outline"
+                    className="flex-1"
+                  >
+                    <Eye size={16} className="mr-2" />
+                    Ver Detalhes
+                  </Button>
+                  <Button 
+                    className={`flex-1 transition-all duration-200 ${
+                      workout.completed 
+                        ? 'bg-green-500 hover:bg-green-600' 
+                        : workout.progress > 0
+                        ? 'bg-blue-500 hover:bg-blue-600'
+                        : 'bg-primary hover:bg-primary/90'
+                    } text-white shadow-lg`}
+                    disabled={workout.completed}
+                  >
+                    {workout.completed ? 'Concluído' : workout.progress > 0 ? 'Continuar' : 'Iniciar'}
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}
         </div>
       </div>
+
+      {/* Workout Details Modal */}
+      <WorkoutDetails
+        workout={selectedWorkout}
+        isOpen={isWorkoutDetailsOpen}
+        onClose={() => setIsWorkoutDetailsOpen(false)}
+        isStudent={true}
+      />
     </div>
   );
 };
