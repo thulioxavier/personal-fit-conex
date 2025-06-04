@@ -1,342 +1,302 @@
-
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { 
+  Users, 
+  Dumbbell, 
+  Activity, 
+  Zap,
+  Plus,
+  Clock,
+  Play
+} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, Dumbbell, Activity, Plus, ArrowRight } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import WorkoutDetails from './WorkoutDetails';
 import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 interface DashboardHomeProps {
-  user: { id: string; name: string; email: string; type: 'personal' | 'student' };
+  userType: 'personal' | 'student';
+  onSectionChange: (section: string) => void;
 }
 
-const DashboardHome = ({ user }: DashboardHomeProps) => {
+const DashboardHome = ({ userType, onSectionChange }: DashboardHomeProps) => {
+  const [students] = useState([
+    { id: 1, name: 'João Silva', email: 'joao@email.com' },
+    { id: 2, name: 'Maria Santos', email: 'maria@email.com' },
+    { id: 3, name: 'Carlos Lima', email: 'carlos@email.com' },
+    { id: 4, name: 'Ana Costa', email: 'ana@email.com' },
+  ]);
+
+  const [mockWorkouts] = useState([
+    { id: 1, name: 'Treino A - Peito, Ombro, Tríceps', duration: '45-60 min', exercises: 8 },
+    { id: 2, name: 'Treino B - Costas, Bíceps', duration: '50-65 min', exercises: 6 },
+    { id: 3, name: 'Treino C - Pernas, Glúteos', duration: '60-75 min', exercises: 10 },
+  ]);
+
+  const [studentWorkouts] = useState([
+    { id: 1, name: 'Treino A - Peito, Ombro, Tríceps', duration: '45-60 min', exercises: 8 },
+    { id: 2, name: 'Treino B - Costas, Bíceps', duration: '50-65 min', exercises: 6 },
+  ]);
+
+  const [isWorkoutModalOpen, setIsWorkoutModalOpen] = useState(false);
   const [selectedWorkout, setSelectedWorkout] = useState<any>(null);
-  const [isWorkoutDetailsOpen, setIsWorkoutDetailsOpen] = useState(false);
 
-  // Mock data - would come from API
-  const stats = {
-    students: 15,
-    workouts: 8,
-    exercises: 25
-  };
-
-  const studentWorkouts = [
-    {
-      id: 1,
-      name: 'Treino A - Peito e Tríceps',
-      description: 'Treino focado no desenvolvimento da parte superior',
-      duration: '45-60 min',
-      difficulty: 'Intermediário',
-      totalExercises: 6,
-      completedExercises: 4,
-      assignedDate: '2024-01-15',
-      lastCompleted: '2024-01-18',
-      exercises: [
-        {
-          id: 1,
-          name: 'Supino Reto',
-          sets: 4,
-          reps: '10-12',
-          weight: '70kg',
-          rest: '90s',
-          completed: true,
-          description: 'Exercício fundamental para o peitoral maior',
-          instructions: [
-            'Deite no banco com os pés apoiados no chão',
-            'Segure a barra com pegada pronada na largura dos ombros',
-            'Desça a barra até o peito de forma controlada',
-            'Empurre a barra para cima até a extensão completa dos braços'
-          ],
-          muscleGroups: ['Peitoral Maior', 'Tríceps', 'Deltóide Anterior'],
-          videoUrl: 'https://youtube.com/watch?v=example'
-        },
-        {
-          id: 2,
-          name: 'Tríceps Pulley',
-          sets: 3,
-          reps: '12-15',
-          weight: '40kg',
-          rest: '60s',
-          completed: true,
-          description: 'Isolamento do tríceps com cabo',
-          instructions: [
-            'Fique em pé de frente para o pulley',
-            'Segure a barra com pegada pronada',
-            'Mantenha os cotovelos fixos ao lado do corpo',
-            'Estenda os braços completamente para baixo'
-          ],
-          muscleGroups: ['Tríceps'],
-          videoUrl: 'https://youtube.com/watch?v=example2'
-        }
-      ],
-      objectives: ['Desenvolver força no peito', 'Aumentar massa muscular do tríceps'],
-      equipment: ['Banco', 'Barra', 'Anilhas', 'Pulley'],
-      tips: [
-        'Mantenha sempre a postura correta',
-        'Controle o movimento na fase excêntrica',
-        'Respire corretamente durante o exercício'
-      ],
-      warnings: [
-        'Não faça movimentos bruscos',
-        'Pare se sentir dor nas articulações'
-      ]
-    },
-    {
-      id: 2,
-      name: 'Treino B - Costas e Bíceps',
-      description: 'Fortalecimento das costas e braços',
-      duration: '50-65 min',
-      difficulty: 'Intermediário',
-      totalExercises: 5,
-      completedExercises: 2,
-      assignedDate: '2024-01-16',
-      lastCompleted: '2024-01-19',
-      exercises: [
-        {
-          id: 3,
-          name: 'Puxada Frontal',
-          sets: 4,
-          reps: '8-10',
-          weight: '60kg',
-          rest: '90s',
-          completed: true,
-          description: 'Exercício para latíssimo do dorso',
-          instructions: [
-            'Sente no equipamento com as coxas fixas',
-            'Segure a barra com pegada pronada ampla',
-            'Puxe a barra até a altura do peito',
-            'Retorne de forma controlada'
-          ],
-          muscleGroups: ['Latíssimo do Dorso', 'Bíceps', 'Romboides']
-        }
-      ],
-      objectives: ['Desenvolver largura das costas', 'Fortalecer bíceps'],
-      equipment: ['Pulley Alto', 'Banco'],
-      tips: ['Concentre-se na contração das costas', 'Evite usar o impulso'],
-      warnings: ['Não force além do limite', 'Mantenha a coluna ereta']
-    }
-  ];
-
-  const handleViewWorkout = (workout: any) => {
-    setSelectedWorkout(workout);
-    setIsWorkoutDetailsOpen(true);
-  };
-
-  if (user.type === 'personal') {
+  if (userType === 'personal') {
     return (
-      <div className="space-y-8">
-        {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
-          <p className="text-gray-600">Visão geral dos seus dados</p>
-        </div>
-
-        {/* Stats Cards */}
+      <div className="space-y-8 animate-slide-in-up">
+        {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="border-0 shadow-sm bg-gradient-to-br from-blue-50 to-blue-100">
+          <Card className="modern-card metric-card border-l-4 border-l-blue-500">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-blue-600 mb-1">Total de Alunos</p>
-                  <p className="text-3xl font-bold text-blue-700">{stats.students}</p>
+                  <p className="text-sm font-bold text-gray-600 uppercase tracking-wider">Total de Alunos</p>
+                  <p className="text-4xl font-black text-gray-900">{students.length}</p>
                 </div>
-                <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
-                  <Users size={24} className="text-white" />
+                <div className="icon-container bg-blue-100 text-blue-600 rounded-sm">
+                  <Users size={24} />
                 </div>
               </div>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="w-full mt-4 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-              >
-                <Plus size={16} className="mr-2" />
-                Adicionar Aluno
-              </Button>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-sm bg-gradient-to-br from-emerald-50 to-emerald-100">
+          <Card className="modern-card metric-card border-l-4 border-l-green-500">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-emerald-600 mb-1">Treinos Criados</p>
-                  <p className="text-3xl font-bold text-emerald-700">{stats.workouts}</p>
+                  <p className="text-sm font-bold text-gray-600 uppercase tracking-wider">Treinos Criados</p>
+                  <p className="text-4xl font-black text-gray-900">{mockWorkouts.length}</p>
                 </div>
-                <div className="w-12 h-12 bg-emerald-500 rounded-lg flex items-center justify-center">
-                  <Dumbbell size={24} className="text-white" />
+                <div className="icon-container bg-green-100 text-green-600 rounded-sm">
+                  <Dumbbell size={24} />
                 </div>
               </div>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="w-full mt-4 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
-              >
-                <Plus size={16} className="mr-2" />
-                Criar Treino
-              </Button>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-sm bg-gradient-to-br from-orange-50 to-orange-100">
+          <Card className="modern-card metric-card border-l-4 border-l-purple-500">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-orange-600 mb-1">Exercícios</p>
-                  <p className="text-3xl font-bold text-orange-700">{stats.exercises}</p>
+                  <p className="text-sm font-bold text-gray-600 uppercase tracking-wider">Exercícios</p>
+                  <p className="text-4xl font-black text-gray-900">24</p>
                 </div>
-                <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center">
-                  <Activity size={24} className="text-white" />
+                <div className="icon-container bg-purple-100 text-purple-600 rounded-sm">
+                  <Activity size={24} />
                 </div>
               </div>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="w-full mt-4 text-orange-600 hover:text-orange-700 hover:bg-orange-50"
-              >
-                <Plus size={16} className="mr-2" />
-                Adicionar Exercício
-              </Button>
             </CardContent>
           </Card>
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="border border-gray-200 hover:shadow-md transition-shadow cursor-pointer">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Gerenciar Alunos</h3>
-                  <p className="text-sm text-gray-600">Visualize e edite informações dos alunos</p>
-                </div>
-                <ArrowRight size={20} className="text-gray-400" />
+        <Card className="modern-card">
+          <CardHeader className="border-b-2 border-gray-100">
+            <CardTitle className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center">
+                <Zap size={18} className="text-white" />
               </div>
-            </CardContent>
-          </Card>
+              Ações Rápidas
+            </CardTitle>
+            <CardDescription>Acesse rapidamente as principais funcionalidades</CardDescription>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Button 
+                onClick={() => onSectionChange('students')}
+                className="h-16 text-left justify-start bg-blue-500 hover:bg-blue-600 shadow-lg"
+              >
+                <Plus size={20} className="mr-3" />
+                <div>
+                  <div className="font-bold">Novo Aluno</div>
+                  <div className="text-xs opacity-90 normal-case">Cadastrar aluno</div>
+                </div>
+              </Button>
+              
+              <Button 
+                onClick={() => onSectionChange('workouts')}
+                className="h-16 text-left justify-start bg-green-500 hover:bg-green-600 shadow-lg"
+              >
+                <Plus size={20} className="mr-3" />
+                <div>
+                  <div className="font-bold">Novo Treino</div>
+                  <div className="text-xs opacity-90 normal-case">Criar treino</div>
+                </div>
+              </Button>
+              
+              <Button 
+                onClick={() => onSectionChange('exercises')}
+                className="h-16 text-left justify-start bg-purple-500 hover:bg-purple-600 shadow-lg"
+              >
+                <Plus size={20} className="mr-3" />
+                <div>
+                  <div className="font-bold">Novo Exercício</div>
+                  <div className="text-xs opacity-90 normal-case">Cadastrar exercício</div>
+                </div>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
-          <Card className="border border-gray-200 hover:shadow-md transition-shadow cursor-pointer">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Biblioteca de Treinos</h3>
-                  <p className="text-sm text-gray-600">Crie e organize seus treinos</p>
-                </div>
-                <ArrowRight size={20} className="text-gray-400" />
+        {/* Recent Activity */}
+        <Card className="modern-card">
+          <CardHeader className="border-b-2 border-gray-100">
+            <CardTitle className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-gray-800 rounded-sm flex items-center justify-center">
+                <Clock size={18} className="text-white" />
               </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border border-gray-200 hover:shadow-md transition-shadow cursor-pointer">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Exercícios</h3>
-                  <p className="text-sm text-gray-600">Gerencie sua biblioteca de exercícios</p>
+              Atividade Recente
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="space-y-4">
+              {[
+                { action: 'Novo aluno cadastrado', name: 'João Silva', time: '2 min atrás', type: 'user' },
+                { action: 'Treino criado', name: 'Treino A - Peito/Ombro', time: '15 min atrás', type: 'workout' },
+                { action: 'Exercício adicionado', name: 'Supino Inclinado', time: '1 hora atrás', type: 'exercise' },
+              ].map((item, index) => (
+                <div key={index} className="flex items-center gap-4 p-3 bg-gray-50 rounded-sm border-l-4 border-l-primary">
+                  <div className={`w-10 h-10 rounded-sm flex items-center justify-center ${
+                    item.type === 'user' ? 'bg-blue-100 text-blue-600' :
+                    item.type === 'workout' ? 'bg-green-100 text-green-600' :
+                    'bg-purple-100 text-purple-600'
+                  }`}>
+                    {item.type === 'user' ? <Users size={16} /> :
+                     item.type === 'workout' ? <Dumbbell size={16} /> :
+                     <Activity size={16} />}
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-bold text-gray-900">{item.action}</p>
+                    <p className="text-sm text-gray-600">{item.name}</p>
+                  </div>
+                  <p className="text-xs text-gray-500 font-medium">{item.time}</p>
                 </div>
-                <ArrowRight size={20} className="text-gray-400" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   // Student view
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Meus Treinos</h1>
-        <p className="text-gray-600">Acompanhe seu progresso e execute seus treinos</p>
-      </div>
+    <div className="space-y-8 animate-slide-in-up">
+      {/* Welcome Card */}
+      <Card className="modern-card-gradient">
+        <CardContent className="p-8">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 bg-primary rounded-sm flex items-center justify-center">
+              <Dumbbell size={32} className="text-white" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-black text-gray-900">Bem-vindo de volta!</h1>
+              <p className="text-gray-600 font-medium">Pronto para o próximo treino?</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* Student Workouts */}
-      <div className="space-y-4">
-        {studentWorkouts.map((workout) => {
-          const progressPercentage = Math.round((workout.completedExercises / workout.totalExercises) * 100);
-          
-          return (
-            <Card key={workout.id} className="border border-gray-200 hover:shadow-md transition-all duration-200">
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-xl font-semibold text-gray-900">{workout.name}</h3>
-                      <Badge variant={progressPercentage === 100 ? "default" : "secondary"} className="text-xs">
-                        {progressPercentage === 100 ? 'Concluído' : 'Em andamento'}
-                      </Badge>
-                    </div>
-                    <p className="text-gray-600 mb-3">{workout.description}</p>
-                    
-                    <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-4">
-                      <span className="flex items-center gap-1">
-                        <Activity size={14} />
-                        {workout.totalExercises} exercícios
+      {/* Current Workout Status */}
+      <Card className="modern-card border-l-4 border-l-green-500">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-xl font-bold text-gray-900">Próximo Treino</h3>
+              <p className="text-2xl font-black text-green-600 mt-1">Treino A - Peito, Ombro, Tríceps</p>
+              <p className="text-sm text-gray-600 font-medium mt-2">Hoje • 45-60 min</p>
+            </div>
+            <Button size="lg" className="bg-green-500 hover:bg-green-600 shadow-lg">
+              <Play size={20} className="mr-2" />
+              Iniciar
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Meus Treinos */}
+      <Card className="modern-card">
+        <CardHeader className="border-b-2 border-gray-100">
+          <CardTitle className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center">
+              <Dumbbell size={18} className="text-white" />
+            </div>
+            Meus Treinos
+          </CardTitle>
+          <CardDescription>Seus treinos atribuídos pelo personal trainer</CardDescription>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="grid gap-4">
+            {studentWorkouts.map((workout) => (
+              <div
+                key={workout.id}
+                className="flex items-center justify-between p-4 bg-gray-50 rounded-sm border-2 border-gray-100 hover:border-primary/20 transition-all duration-200 hover:shadow-md"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-primary rounded-sm flex items-center justify-center">
+                    <Dumbbell size={20} className="text-white" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900">{workout.name}</h4>
+                    <div className="flex items-center gap-4 mt-1">
+                      <span className="text-sm text-gray-600 font-medium">
+                        <Clock size={14} className="inline mr-1" />
+                        {workout.duration}
                       </span>
-                      <span>{workout.duration}</span>
-                      <span>{workout.difficulty}</span>
-                      <span>Atribuído em {new Date(workout.assignedDate).toLocaleDateString('pt-BR')}</span>
-                    </div>
-
-                    {/* Progress Bar */}
-                    <div className="mb-4">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-sm font-medium text-gray-700">Progresso</span>
-                        <span className="text-sm text-gray-600">
-                          {workout.completedExercises}/{workout.totalExercises} exercícios
-                        </span>
-                      </div>
-                      <div className="w-full h-3 bg-gray-200 rounded-full">
-                        <div 
-                          className={`h-full rounded-full transition-all duration-300 ${
-                            progressPercentage === 100 ? 'bg-green-500' : 'bg-blue-500'
-                          }`}
-                          style={{ width: `${progressPercentage}%` }}
-                        />
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">{progressPercentage}% concluído</p>
+                      <span className="text-sm text-gray-600 font-medium">
+                        <Activity size={14} className="inline mr-1" />
+                        {workout.exercises} exercícios
+                      </span>
                     </div>
                   </div>
                 </div>
-
-                <div className="flex gap-3">
+                <div className="flex gap-2">
                   <Button 
-                    onClick={() => handleViewWorkout(workout)}
                     variant="outline" 
                     size="sm"
-                    className="flex-1"
+                    onClick={() => {
+                      setSelectedWorkout(workout);
+                      setIsWorkoutModalOpen(true);
+                    }}
+                    className="border-2"
                   >
                     Ver Detalhes
                   </Button>
-                  <Button 
-                    size="sm"
-                    className={`flex-1 ${
-                      progressPercentage === 100 
-                        ? 'bg-green-600 hover:bg-green-700' 
-                        : 'bg-blue-600 hover:bg-blue-700'
-                    }`}
-                  >
-                    {progressPercentage === 100 ? 'Refazer Treino' : progressPercentage > 0 ? 'Continuar' : 'Iniciar Treino'}
+                  <Button size="sm" className="bg-green-500 hover:bg-green-600">
+                    <Play size={16} className="mr-1" />
+                    Iniciar
                   </Button>
                 </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Workout Details Modal */}
-      <WorkoutDetails
-        workout={selectedWorkout}
-        isOpen={isWorkoutDetailsOpen}
-        onClose={() => {
-          setIsWorkoutDetailsOpen(false);
-          setSelectedWorkout(null);
-        }}
-        isStudent={true}
-      />
+      <Dialog open={isWorkoutModalOpen} onOpenChange={setIsWorkoutModalOpen}>
+        <DialogContent className="bg-white">
+          <DialogHeader>
+            <DialogTitle>{selectedWorkout?.name}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-gray-600">
+              Detalhes do treino {selectedWorkout?.name}:
+            </p>
+            {selectedWorkout && (
+              <div>
+                <p>Duração: {selectedWorkout.duration}</p>
+                <p>Exercícios: {selectedWorkout.exercises}</p>
+                {/* Adicione mais detalhes conforme necessário */}
+              </div>
+            )}
+            <Button onClick={() => setIsWorkoutModalOpen(false)}>Fechar</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
