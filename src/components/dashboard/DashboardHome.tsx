@@ -185,22 +185,149 @@ const StudentDashboard = ({ user }: { user: any }) => {
     {
       id: 1,
       name: 'Treino A - Peito, Ombro, Tríceps',
-      description: 'Treino focado no desenvolvimento da parte superior do corpo',
+      description: 'Treino focado no desenvolvimento da parte superior do corpo com ênfase em força e hipertrofia',
       totalExercises: 8,
       duration: '45 min',
       difficulty: 'Intermediário',
       completed: false,
       progress: 0,
       nextExercise: 'Supino Reto',
+      category: 'Hipertrofia',
+      objectives: [
+        'Desenvolver força no peitoral',
+        'Aumentar volume muscular dos ombros',
+        'Fortalecer os tríceps',
+        'Melhorar coordenação e estabilidade'
+      ],
+      equipment: ['Barra', 'Halteres', 'Banco', 'Polias'],
+      tips: [
+        'Mantenha a respiração controlada durante toda a execução',
+        'Foque na contração muscular e não apenas no peso',
+        'Respeite os intervalos de descanso para melhor recuperação',
+        'Hidrate-se adequadamente entre as séries'
+      ],
+      warnings: [
+        'Não execute movimentos com cargas excessivas sem supervisão',
+        'Pare imediatamente se sentir dor articular',
+        'Realize aquecimento adequado antes de iniciar'
+      ],
       exercises: [
-        { id: 1, name: 'Supino Reto', sets: 4, reps: '8-12', weight: '80kg', rest: '90s', completed: false },
-        { id: 2, name: 'Supino Inclinado', sets: 3, reps: '10-12', weight: '70kg', rest: '60s', completed: false },
-        { id: 3, name: 'Desenvolvimento com Halteres', sets: 3, reps: '12-15', weight: '20kg', rest: '60s', completed: false },
-        { id: 4, name: 'Elevação Lateral', sets: 3, reps: '12-15', weight: '12kg', rest: '45s', completed: false },
-        { id: 5, name: 'Tríceps Pulley', sets: 3, reps: '12-15', rest: '45s', completed: false },
-        { id: 6, name: 'Tríceps Francês', sets: 3, reps: '10-12', weight: '30kg', rest: '60s', completed: false },
-        { id: 7, name: 'Flexão de Braço', sets: 2, reps: '15-20', rest: '45s', completed: false },
-        { id: 8, name: 'Abdominal Supra', sets: 3, reps: '20', rest: '30s', completed: false }
+        { 
+          id: 1, 
+          name: 'Supino Reto', 
+          sets: 4, 
+          reps: '8-12', 
+          weight: '80kg', 
+          rest: '90s', 
+          completed: false,
+          description: 'Exercício fundamental para desenvolvimento do peitoral maior e menor',
+          instructions: [
+            'Deite-se no banco com os pés firmemente apoiados no chão',
+            'Segure a barra com pegada um pouco mais larga que os ombros',
+            'Desça a barra controladamente até tocar o peito',
+            'Empurre a barra de volta à posição inicial',
+            'Mantenha as escápulas retraídas durante todo o movimento'
+          ],
+          muscleGroups: ['Peitoral Maior', 'Deltóide Anterior', 'Tríceps'],
+          difficulty: 'Intermediário',
+          videoUrl: 'https://example.com/supino-reto-video',
+          imageUrl: 'https://example.com/supino-reto-image'
+        },
+        { 
+          id: 2, 
+          name: 'Supino Inclinado', 
+          sets: 3, 
+          reps: '10-12', 
+          weight: '70kg', 
+          rest: '60s', 
+          completed: false,
+          description: 'Variação do supino que enfatiza a porção superior do peitoral',
+          instructions: [
+            'Ajuste o banco em inclinação de 30-45 graus',
+            'Posicione-se com as costas bem apoiadas',
+            'Segure a barra com pegada média',
+            'Desça controladamente até a altura do peito superior',
+            'Empurre a barra de volta mantendo a trajetória'
+          ],
+          muscleGroups: ['Peitoral Superior', 'Deltóide Anterior'],
+          difficulty: 'Intermediário'
+        },
+        { 
+          id: 3, 
+          name: 'Desenvolvimento com Halteres', 
+          sets: 3, 
+          reps: '12-15', 
+          weight: '20kg', 
+          rest: '60s', 
+          completed: false,
+          description: 'Exercício para desenvolvimento completo dos deltóides',
+          instructions: [
+            'Sente-se no banco com as costas eretas',
+            'Segure um halter em cada mão na altura dos ombros',
+            'Empurre os halteres para cima até estender os braços',
+            'Desça controladamente até a posição inicial',
+            'Mantenha o core contraído durante todo o movimento'
+          ],
+          muscleGroups: ['Deltóide', 'Tríceps'],
+          difficulty: 'Intermediário'
+        },
+        { 
+          id: 4, 
+          name: 'Elevação Lateral', 
+          sets: 3, 
+          reps: '12-15', 
+          weight: '12kg', 
+          rest: '45s', 
+          completed: false,
+          description: 'Exercício de isolamento para o deltóide médio',
+          muscleGroups: ['Deltóide Médio'],
+          difficulty: 'Fácil'
+        },
+        { 
+          id: 5, 
+          name: 'Tríceps Pulley', 
+          sets: 3, 
+          reps: '12-15', 
+          rest: '45s', 
+          completed: false,
+          description: 'Exercício para isolamento e definição do tríceps',
+          muscleGroups: ['Tríceps'],
+          difficulty: 'Fácil'
+        },
+        { 
+          id: 6, 
+          name: 'Tríceps Francês', 
+          sets: 3, 
+          reps: '10-12', 
+          weight: '30kg', 
+          rest: '60s', 
+          completed: false,
+          description: 'Exercício para desenvolvimento da cabeça longa do tríceps',
+          muscleGroups: ['Tríceps'],
+          difficulty: 'Intermediário'
+        },
+        { 
+          id: 7, 
+          name: 'Flexão de Braço', 
+          sets: 2, 
+          reps: '15-20', 
+          rest: '45s', 
+          completed: false,
+          description: 'Exercício funcional usando o peso corporal',
+          muscleGroups: ['Peitoral', 'Tríceps', 'Core'],
+          difficulty: 'Fácil'
+        },
+        { 
+          id: 8, 
+          name: 'Abdominal Supra', 
+          sets: 3, 
+          reps: '20', 
+          rest: '30s', 
+          completed: false,
+          description: 'Exercício para fortalecimento do reto abdominal',
+          muscleGroups: ['Reto Abdominal'],
+          difficulty: 'Fácil'
+        }
       ]
     },
     {

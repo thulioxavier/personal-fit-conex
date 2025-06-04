@@ -20,7 +20,7 @@ interface HeaderProps {
 const Header = ({ user, onLogout, onMenuToggle }: HeaderProps) => {
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-40 backdrop-blur-sm">
-      <div className="flex items-center justify-between px-6 py-4">
+      <div className="flex items-center justify-between px-4 lg:px-6 py-3">
         {/* Left side */}
         <div className="flex items-center gap-4">
           <Button
@@ -96,7 +96,7 @@ const Header = ({ user, onLogout, onMenuToggle }: HeaderProps) => {
                 </div>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 bg-white">
+            <DropdownMenuContent align="end" className="w-56 bg-white z-50">
               <div className="px-3 py-2">
                 <p className="text-sm font-medium">{user.name}</p>
                 <p className="text-xs text-gray-500">{user.email}</p>
