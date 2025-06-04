@@ -1,8 +1,8 @@
+
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Search, Edit, Trash2, Activity, Upload, Link, Play } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Play, Link } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -13,6 +13,15 @@ import {
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 const ExercisesManager = () => {
   const [exercises, setExercises] = useState([
@@ -22,7 +31,6 @@ const ExercisesManager = () => {
       category: 'Peito',
       description: 'Exercício básico para desenvolvimento do peitoral maior',
       videoUrl: 'https://youtube.com/watch?v=example1',
-      imageUrl: '/placeholder.svg',
       instructions: 'Deite no banco, segure a barra com pegada pronada...',
       sets: '4x12',
       rest: '60-90s',
@@ -33,7 +41,6 @@ const ExercisesManager = () => {
       category: 'Pernas',
       description: 'Exercício fundamental para quadríceps e glúteos',
       videoUrl: 'https://youtube.com/watch?v=example2',
-      imageUrl: '/placeholder.svg',
       instructions: 'Fique em pé, pés na largura dos ombros...',
       sets: '4x15',
       rest: '90s',
@@ -44,7 +51,6 @@ const ExercisesManager = () => {
       category: 'Costas',
       description: 'Exercício para desenvolvimento do latíssimo do dorso',
       videoUrl: '',
-      imageUrl: '/placeholder.svg',
       instructions: 'Sente no equipamento, segure a barra...',
       sets: '3x12',
       rest: '60s',
@@ -78,7 +84,6 @@ const ExercisesManager = () => {
       setExercises([...exercises, {
         id: exercises.length + 1,
         ...newExercise,
-        imageUrl: '/placeholder.svg',
       }]);
       setNewExercise({
         name: '',
@@ -95,6 +100,19 @@ const ExercisesManager = () => {
 
   const handleDeleteExercise = (id: number) => {
     setExercises(exercises.filter(exercise => exercise.id !== id));
+  };
+
+  const getCategoryColor = (category: string) => {
+    const colors: { [key: string]: string } = {
+      'Peito': 'bg-blue-100 text-blue-700 hover:bg-blue-100',
+      'Costas': 'bg-green-100 text-green-700 hover:bg-green-100',
+      'Pernas': 'bg-purple-100 text-purple-700 hover:bg-purple-100',
+      'Ombros': 'bg-orange-100 text-orange-700 hover:bg-orange-100',
+      'Braços': 'bg-red-100 text-red-700 hover:bg-red-100',
+      'Abdômen': 'bg-yellow-100 text-yellow-700 hover:bg-yellow-100',
+      'Cardio': 'bg-pink-100 text-pink-700 hover:bg-pink-100',
+    };
+    return colors[category] || 'bg-gray-100 text-gray-700 hover:bg-gray-100';
   };
 
   return (
@@ -202,17 +220,6 @@ const ExercisesManager = () => {
                 </div>
               </div>
 
-              <div>
-                <Label>Imagem do exercício (opcional)</Label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                  <Upload size={24} className="mx-auto text-gray-400 mb-2" />
-                  <p className="text-sm text-gray-600 mb-2">Clique para fazer upload ou arraste uma imagem</p>
-                  <Button variant="outline" size="sm">
-                    Selecionar arquivo
-                  </Button>
-                </div>
-              </div>
-
               <Button onClick={handleAddExercise} className="w-full bg-blue-500 hover:bg-blue-600 text-white">
                 Adicionar Exercício
               </Button>
@@ -245,81 +252,86 @@ const ExercisesManager = () => {
         </Select>
       </div>
 
-      {/* Exercises Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredExercises.map((exercise) => (
-          <Card key={exercise.id} className="hover:shadow-md transition-shadow">
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between">
-                <div className="flex items-start space-x-3 flex-1">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <Activity size={24} className="text-blue-600" />
+      {/* Exercises Table */}
+      <div className="bg-white rounded-lg border border-gray-200">
+        <Table>
+          <TableHeader>
+            <TableRow className="border-gray-200">
+              <TableHead className="font-semibold text-gray-900">Nome</TableHead>
+              <TableHead className="font-semibold text-gray-900">Categoria</TableHead>
+              <TableHead className="font-semibold text-gray-900">Descrição</TableHead>
+              <TableHead className="font-semibold text-gray-900">Séries</TableHead>
+              <TableHead className="font-semibold text-gray-900">Descanso</TableHead>
+              <TableHead className="font-semibold text-gray-900">Vídeo</TableHead>
+              <TableHead className="font-semibold text-gray-900 text-right">Ações</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredExercises.map((exercise) => (
+              <TableRow key={exercise.id} className="border-gray-100 hover:bg-gray-50">
+                <TableCell className="font-medium text-gray-900">{exercise.name}</TableCell>
+                <TableCell>
+                  <Badge className={getCategoryColor(exercise.category)}>
+                    {exercise.category}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-gray-600 max-w-xs">
+                  <div className="truncate" title={exercise.description}>
+                    {exercise.description}
                   </div>
-                  <div className="flex-1">
-                    <CardTitle className="text-lg leading-tight">{exercise.name}</CardTitle>
-                    <span className="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-full mt-1">
-                      {exercise.category}
-                    </span>
+                </TableCell>
+                <TableCell className="text-gray-600">{exercise.sets}</TableCell>
+                <TableCell className="text-gray-600">{exercise.rest}</TableCell>
+                <TableCell>
+                  {exercise.videoUrl ? (
+                    <div className="flex items-center text-sm text-blue-600">
+                      <Play size={14} className="mr-1" />
+                      <span>Disponível</span>
+                    </div>
+                  ) : (
+                    <span className="text-sm text-gray-400">Não disponível</span>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <div className="flex justify-end gap-2">
+                    <Button variant="ghost" size="sm">
+                      <Edit size={14} />
+                    </Button>
+                    {exercise.videoUrl && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        className="text-blue-600 hover:text-blue-700"
+                      >
+                        <Play size={14} />
+                      </Button>
+                    )}
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => handleDeleteExercise(exercise.id)}
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      <Trash2 size={14} />
+                    </Button>
                   </div>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-600 mb-3 line-clamp-2">{exercise.description}</p>
-              
-              <div className="space-y-2 text-sm mb-4">
-                {exercise.sets && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Séries:</span>
-                    <span className="font-medium">{exercise.sets}</span>
-                  </div>
-                )}
-                {exercise.rest && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Descanso:</span>
-                    <span className="font-medium">{exercise.rest}</span>
-                  </div>
-                )}
-              </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
 
-              {exercise.videoUrl && (
-                <div className="flex items-center text-sm text-blue-600 mb-3">
-                  <Play size={14} className="mr-1" />
-                  <span>Vídeo disponível</span>
-                </div>
-              )}
-
-              <div className="flex items-center space-x-2">
-                <Button variant="outline" size="sm" className="flex-1">
-                  <Edit size={14} className="mr-1" />
-                  Editar
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => handleDeleteExercise(exercise.id)}
-                  className="text-red-600 hover:text-red-700"
-                >
-                  <Trash2 size={14} />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+        {filteredExercises.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-600">
+              {searchTerm || selectedCategory !== 'all' 
+                ? 'Nenhum exercício encontrado com os filtros aplicados' 
+                : 'Nenhum exercício cadastrado'
+              }
+            </p>
+          </div>
+        )}
       </div>
-
-      {filteredExercises.length === 0 && (
-        <div className="text-center py-12">
-          <Activity size={48} className="mx-auto text-gray-400 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum exercício encontrado</h3>
-          <p className="text-gray-600">
-            {searchTerm || selectedCategory !== 'all' 
-              ? 'Tente ajustar os filtros de busca' 
-              : 'Comece adicionando seu primeiro exercício'
-            }
-          </p>
-        </div>
-      )}
     </div>
   );
 };

@@ -1,9 +1,7 @@
-
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Search, Edit, Trash2, User, Dumbbell, Calendar } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Dumbbell } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -14,6 +12,14 @@ import {
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 const StudentsManager = () => {
   const [students, setStudents] = useState([
@@ -174,103 +180,92 @@ const StudentsManager = () => {
         />
       </div>
 
-      {/* Students Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredStudents.map((student) => (
-          <Card key={student.id} className="hover:shadow-lg transition-all duration-200 border-slate-200">
-            <CardHeader className="pb-4">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-                    <User size={24} className="text-primary" />
+      {/* Students Table */}
+      <div className="bg-white rounded-lg border border-slate-200">
+        <Table>
+          <TableHeader>
+            <TableRow className="border-slate-200">
+              <TableHead className="font-semibold text-slate-900">Nome</TableHead>
+              <TableHead className="font-semibold text-slate-900">Email</TableHead>
+              <TableHead className="font-semibold text-slate-900">Telefone</TableHead>
+              <TableHead className="font-semibold text-slate-900">Status</TableHead>
+              <TableHead className="font-semibold text-slate-900">Data de Cadastro</TableHead>
+              <TableHead className="font-semibold text-slate-900">Treinos</TableHead>
+              <TableHead className="font-semibold text-slate-900 text-right">Ações</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredStudents.map((student) => (
+              <TableRow key={student.id} className="border-slate-100 hover:bg-slate-50">
+                <TableCell className="font-medium text-slate-900">{student.name}</TableCell>
+                <TableCell className="text-slate-600">{student.email}</TableCell>
+                <TableCell className="text-slate-600">{student.phone}</TableCell>
+                <TableCell>
+                  <Badge className={
+                    student.status === 'Ativo' 
+                      ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-100' 
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-100'
+                  }>
+                    {student.status}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-slate-600">
+                  {new Date(student.joinDate).toLocaleDateString('pt-BR')}
+                </TableCell>
+                <TableCell>
+                  {student.assignedWorkouts && student.assignedWorkouts.length > 0 ? (
+                    <div className="space-y-1">
+                      {student.assignedWorkouts.slice(0, 2).map((workout, index) => (
+                        <div key={index} className="text-xs text-slate-600 bg-slate-100 px-2 py-1 rounded">
+                          {workout.length > 25 ? workout.substring(0, 25) + '...' : workout}
+                        </div>
+                      ))}
+                      {student.assignedWorkouts.length > 2 && (
+                        <p className="text-xs text-slate-500">
+                          +{student.assignedWorkouts.length - 2} mais
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <span className="text-xs text-slate-400">Nenhum treino</span>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <div className="flex justify-end gap-2">
+                    <Button variant="ghost" size="sm">
+                      <Edit size={14} />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => handleAssignWorkouts(student)}
+                      className="text-primary hover:text-primary"
+                    >
+                      <Dumbbell size={14} />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => handleDeleteStudent(student.id)}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 size={14} />
+                    </Button>
                   </div>
-                  <div>
-                    <CardTitle className="text-lg text-slate-900">{student.name}</CardTitle>
-                    <p className="text-sm text-slate-600">{student.email}</p>
-                  </div>
-                </div>
-                <Badge className={
-                  student.status === 'Ativo' 
-                    ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-100' 
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-100'
-                }>
-                  {student.status}
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center gap-2 text-slate-600">
-                  <span className="font-medium">Telefone:</span>
-                  <span>{student.phone}</span>
-                </div>
-                <div className="flex items-center gap-2 text-slate-600">
-                  <Calendar size={14} />
-                  <span>Desde {new Date(student.joinDate).toLocaleDateString('pt-BR')}</span>
-                </div>
-              </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
 
-              {/* Treinos Atribuídos */}
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <Dumbbell size={14} className="text-primary" />
-                  <span className="text-sm font-medium">Treinos Atribuídos</span>
-                </div>
-                {student.assignedWorkouts && student.assignedWorkouts.length > 0 ? (
-                  <div className="space-y-1">
-                    {student.assignedWorkouts.slice(0, 2).map((workout, index) => (
-                      <Badge key={index} variant="outline" className="text-xs block">
-                        {workout}
-                      </Badge>
-                    ))}
-                    {student.assignedWorkouts.length > 2 && (
-                      <p className="text-xs text-slate-500">
-                        +{student.assignedWorkouts.length - 2} mais
-                      </p>
-                    )}
-                  </div>
-                ) : (
-                  <p className="text-xs text-slate-500">Nenhum treino atribuído</p>
-                )}
-              </div>
-
-              <div className="flex gap-2 pt-2">
-                <Button variant="outline" size="sm" className="flex-1">
-                  <Edit size={14} className="mr-1" />
-                  Editar
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => handleAssignWorkouts(student)}
-                  className="flex-1 text-primary hover:text-primary"
-                >
-                  <Dumbbell size={14} className="mr-1" />
-                  Treinos
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => handleDeleteStudent(student.id)}
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                >
-                  <Trash2 size={14} />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+        {filteredStudents.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-slate-600">
+              {searchTerm ? 'Nenhum aluno encontrado com esse termo' : 'Nenhum aluno cadastrado'}
+            </p>
+          </div>
+        )}
       </div>
-
-      {filteredStudents.length === 0 && (
-        <div className="text-center py-12">
-          <User size={48} className="mx-auto text-slate-400 mb-4" />
-          <h3 className="text-lg font-medium text-slate-900 mb-2">Nenhum aluno encontrado</h3>
-          <p className="text-slate-600">
-            {searchTerm ? 'Tente buscar com outros termos' : 'Comece adicionando seu primeiro aluno'}
-          </p>
-        </div>
-      )}
 
       {/* Dialog para Atribuir Treinos */}
       <Dialog open={isAssignWorkoutOpen} onOpenChange={setIsAssignWorkoutOpen}>

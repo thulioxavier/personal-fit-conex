@@ -1,6 +1,14 @@
 
-import { Home, Users, Dumbbell, Activity, Settings, TrendingUp, Calendar } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { 
+  Home, 
+  Users, 
+  Dumbbell, 
+  Activity, 
+  BarChart3,
+  X,
+  Menu
+} from 'lucide-react';
 
 interface SidebarProps {
   userType: 'personal' | 'student';
@@ -10,73 +18,117 @@ interface SidebarProps {
   onToggle: () => void;
 }
 
-const Sidebar = ({ userType, activeSection, onSectionChange, isOpen }: SidebarProps) => {
+const Sidebar = ({ userType, activeSection, onSectionChange, isOpen, onToggle }: SidebarProps) => {
   const personalMenuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Home },
     { id: 'students', label: 'Alunos', icon: Users },
     { id: 'workouts', label: 'Treinos', icon: Dumbbell },
     { id: 'exercises', label: 'Exercícios', icon: Activity },
-    { id: 'analytics', label: 'Relatórios', icon: TrendingUp },
-    { id: 'schedule', label: 'Agenda', icon: Calendar },
-    { id: 'settings', label: 'Configurações', icon: Settings },
   ];
 
   const studentMenuItems = [
     { id: 'dashboard', label: 'Meus Treinos', icon: Home },
-    { id: 'progress', label: 'Progresso', icon: TrendingUp },
-    { id: 'schedule', label: 'Agenda', icon: Calendar },
-    { id: 'settings', label: 'Configurações', icon: Settings },
+    { id: 'progress', label: 'Progresso', icon: BarChart3 },
   ];
 
   const menuItems = userType === 'personal' ? personalMenuItems : studentMenuItems;
 
   return (
     <>
-      <div className={cn(
-        "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 shadow-sm transform transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0",
-        isOpen ? "translate-x-0" : "-translate-x-full"
-      )}>
-        {/* Logo */}
-        <div className="flex items-center px-6 py-4 border-b border-slate-200">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Dumbbell className="w-5 h-5 text-white" />
+      {/* Desktop Sidebar */}
+      <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 bg-white border-r border-gray-200">
+        <div className="flex flex-col flex-1 min-h-0">
+          {/* Logo */}
+          <div className="flex items-center h-16 px-6 border-b border-gray-200 bg-white">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                <Dumbbell size={20} className="text-white" />
+              </div>
+              <h1 className="text-xl font-bold text-gray-900">FitManager</h1>
             </div>
-            <div>
-              <h1 className="text-lg font-bold text-slate-900">FitnessPro</h1>
-              <p className="text-xs text-slate-500">
-                {userType === 'personal' ? 'Personal Trainer' : 'Área do Aluno'}
-              </p>
-            </div>
+          </div>
+
+          {/* Navigation */}
+          <nav className="flex-1 px-4 py-6 space-y-2">
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeSection === item.id;
+              
+              return (
+                <Button
+                  key={item.id}
+                  variant="ghost"
+                  onClick={() => onSectionChange(item.id)}
+                  className={`w-full justify-start h-11 px-3 ${
+                    isActive 
+                      ? 'bg-primary/10 text-primary font-medium border border-primary/20' 
+                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                  }`}
+                >
+                  <Icon size={20} className="mr-3" />
+                  {item.label}
+                </Button>
+              );
+            })}
+          </nav>
+
+          {/* User Info */}
+          <div className="p-4 border-t border-gray-200">
+            <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">
+              {userType === 'personal' ? 'Personal Trainer' : 'Aluno'}
+            </p>
           </div>
         </div>
+      </div>
 
-        {/* Navigation */}
-        <nav className="p-4">
-          <div className="space-y-1">
-            {menuItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => onSectionChange(item.id)}
-                className={cn(
-                  "w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200",
-                  activeSection === item.id
-                    ? "bg-primary text-white shadow-sm"
-                    : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-                )}
-              >
-                <item.icon size={18} className="mr-3" />
-                {item.label}
-              </button>
-            ))}
+      {/* Mobile Sidebar */}
+      <div className={`lg:hidden fixed inset-0 z-50 ${isOpen ? 'block' : 'hidden'}`}>
+        <div className="fixed inset-0 bg-black/20" onClick={onToggle} />
+        <div className="relative flex w-full max-w-xs flex-col bg-white h-full shadow-xl">
+          {/* Header */}
+          <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                <Dumbbell size={20} className="text-white" />
+              </div>
+              <h1 className="text-xl font-bold text-gray-900">FitManager</h1>
+            </div>
+            <Button variant="ghost" size="sm" onClick={onToggle}>
+              <X size={20} />
+            </Button>
           </div>
-        </nav>
 
-        {/* Footer */}
-        <div className="absolute bottom-0 left-0 right-0 p-4">
-          <div className="bg-slate-50 rounded-lg p-3 text-center border border-slate-200">
-            <p className="text-slate-600 text-xs font-medium">
-              Versão 2.1.0
+          {/* Navigation */}
+          <nav className="flex-1 px-4 py-6 space-y-2">
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeSection === item.id;
+              
+              return (
+                <Button
+                  key={item.id}
+                  variant="ghost"
+                  onClick={() => {
+                    onSectionChange(item.id);
+                    onToggle();
+                  }}
+                  className={`w-full justify-start h-11 px-3 ${
+                    isActive 
+                      ? 'bg-primary/10 text-primary font-medium border border-primary/20' 
+                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                  }`}
+                >
+                  <Icon size={20} className="mr-3" />
+                  {item.label}
+                </Button>
+              );
+            })}
+          </nav>
+
+          {/* User Info */}
+          <div className="p-4 border-t border-gray-200">
+            <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">
+              {userType === 'personal' ? 'Personal Trainer' : 'Aluno'}
             </p>
           </div>
         </div>

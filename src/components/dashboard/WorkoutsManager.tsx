@@ -1,18 +1,25 @@
 
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Search, Edit, Trash2, Dumbbell, Users, Calendar, User } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Users, Play } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import WorkoutBuilder from './WorkoutBuilder';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const WorkoutsManager = () => {
   const [workouts, setWorkouts] = useState([
@@ -23,6 +30,8 @@ const WorkoutsManager = () => {
       exercises: 8,
       assignedStudents: 5,
       createdDate: '2024-01-15',
+      duration: '45-60 min',
+      difficulty: 'Intermediário',
     },
     {
       id: 2,
@@ -31,6 +40,8 @@ const WorkoutsManager = () => {
       exercises: 6,
       assignedStudents: 4,
       createdDate: '2024-01-20',
+      duration: '50-65 min',
+      difficulty: 'Intermediário',
     },
     {
       id: 3,
@@ -39,6 +50,8 @@ const WorkoutsManager = () => {
       exercises: 10,
       assignedStudents: 6,
       createdDate: '2024-02-01',
+      duration: '60-75 min',
+      difficulty: 'Avançado',
     },
   ]);
 
@@ -88,6 +101,19 @@ const WorkoutsManager = () => {
     }
   };
 
+  const getDifficultyColor = (difficulty: string) => {
+    switch (difficulty) {
+      case 'Fácil':
+        return 'bg-green-100 text-green-700 hover:bg-green-100';
+      case 'Intermediário':
+        return 'bg-yellow-100 text-yellow-700 hover:bg-yellow-100';
+      case 'Avançado':
+        return 'bg-red-100 text-red-700 hover:bg-red-100';
+      default:
+        return 'bg-gray-100 text-gray-700 hover:bg-gray-100';
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -107,96 +133,94 @@ const WorkoutsManager = () => {
       </div>
 
       {/* Search */}
-      <div className="flex items-center space-x-2">
-        <div className="relative flex-1 max-w-md">
-          <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-          <Input
-            placeholder="Buscar treinos..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
+      <div className="relative max-w-md">
+        <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+        <Input
+          placeholder="Buscar treinos..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-10"
+        />
       </div>
 
-      {/* Workouts Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredWorkouts.map((workout) => (
-          <Card key={workout.id} className="hover:shadow-md transition-shadow">
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between">
-                <div className="flex items-start space-x-3">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <Dumbbell size={24} className="text-blue-600" />
+      {/* Workouts Table */}
+      <div className="bg-white rounded-lg border border-gray-200">
+        <Table>
+          <TableHeader>
+            <TableRow className="border-gray-200">
+              <TableHead className="font-semibold text-gray-900">Nome do Treino</TableHead>
+              <TableHead className="font-semibold text-gray-900">Descrição</TableHead>
+              <TableHead className="font-semibold text-gray-900">Duração</TableHead>
+              <TableHead className="font-semibold text-gray-900">Dificuldade</TableHead>
+              <TableHead className="font-semibold text-gray-900">Exercícios</TableHead>
+              <TableHead className="font-semibold text-gray-900">Alunos</TableHead>
+              <TableHead className="font-semibold text-gray-900">Criado em</TableHead>
+              <TableHead className="font-semibold text-gray-900 text-right">Ações</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredWorkouts.map((workout) => (
+              <TableRow key={workout.id} className="border-gray-100 hover:bg-gray-50">
+                <TableCell className="font-medium text-gray-900">{workout.name}</TableCell>
+                <TableCell className="text-gray-600 max-w-xs">
+                  <div className="truncate" title={workout.description}>
+                    {workout.description}
                   </div>
-                  <div>
-                    <CardTitle className="text-lg leading-tight">{workout.name}</CardTitle>
+                </TableCell>
+                <TableCell className="text-gray-600">{workout.duration}</TableCell>
+                <TableCell>
+                  <Badge className={getDifficultyColor(workout.difficulty)}>
+                    {workout.difficulty}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-gray-600">{workout.exercises}</TableCell>
+                <TableCell className="text-gray-600">{workout.assignedStudents}</TableCell>
+                <TableCell className="text-gray-600">
+                  {new Date(workout.createdDate).toLocaleDateString('pt-BR')}
+                </TableCell>
+                <TableCell>
+                  <div className="flex justify-end gap-2">
+                    <Button variant="ghost" size="sm">
+                      <Edit size={14} />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => handleAssignWorkout(workout)}
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      <Users size={14} />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      className="text-green-600 hover:text-green-700"
+                    >
+                      <Play size={14} />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => handleDeleteWorkout(workout.id)}
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      <Trash2 size={14} />
+                    </Button>
                   </div>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-600 mb-4 line-clamp-2">{workout.description}</p>
-              
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div className="text-center p-3 bg-gray-50 rounded-lg">
-                  <div className="flex items-center justify-center mb-1">
-                    <Dumbbell size={16} className="text-gray-600" />
-                  </div>
-                  <p className="text-lg font-semibold">{workout.exercises}</p>
-                  <p className="text-xs text-gray-600">Exercícios</p>
-                </div>
-                <div className="text-center p-3 bg-gray-50 rounded-lg">
-                  <div className="flex items-center justify-center mb-1">
-                    <Users size={16} className="text-gray-600" />
-                  </div>
-                  <p className="text-lg font-semibold">{workout.assignedStudents}</p>
-                  <p className="text-xs text-gray-600">Alunos</p>
-                </div>
-              </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
 
-              <div className="flex items-center text-xs text-gray-500 mb-4">
-                <Calendar size={12} className="mr-1" />
-                Criado em {new Date(workout.createdDate).toLocaleDateString('pt-BR')}
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Button variant="outline" size="sm" className="flex-1">
-                  <Edit size={14} className="mr-1" />
-                  Editar
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => handleAssignWorkout(workout)}
-                  className="text-blue-600 hover:text-blue-700"
-                >
-                  <User size={14} className="mr-1" />
-                  Atribuir
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => handleDeleteWorkout(workout.id)}
-                  className="text-red-600 hover:text-red-700"
-                >
-                  <Trash2 size={14} />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+        {filteredWorkouts.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-600">
+              {searchTerm ? 'Nenhum treino encontrado com esse termo' : 'Nenhum treino cadastrado'}
+            </p>
+          </div>
+        )}
       </div>
-
-      {filteredWorkouts.length === 0 && (
-        <div className="text-center py-12">
-          <Dumbbell size={48} className="mx-auto text-gray-400 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum treino encontrado</h3>
-          <p className="text-gray-600">
-            {searchTerm ? 'Tente buscar com outros termos' : 'Comece criando seu primeiro treino'}
-          </p>
-        </div>
-      )}
 
       {/* Workout Builder */}
       <WorkoutBuilder
@@ -217,20 +241,17 @@ const WorkoutsManager = () => {
             <div className="space-y-2 max-h-64 overflow-y-auto">
               {students.map((student) => (
                 <div key={student.id} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded">
-                  <input
-                    type="checkbox"
-                    id={`student-${student.id}`}
+                  <Checkbox
                     checked={selectedStudents.includes(student.id)}
-                    onChange={(e) => {
-                      if (e.target.checked) {
+                    onCheckedChange={(checked) => {
+                      if (checked) {
                         setSelectedStudents([...selectedStudents, student.id]);
                       } else {
                         setSelectedStudents(selectedStudents.filter(id => id !== student.id));
                       }
                     }}
-                    className="rounded border-gray-300"
                   />
-                  <label htmlFor={`student-${student.id}`} className="flex-1 cursor-pointer">
+                  <label className="flex-1 cursor-pointer">
                     <div className="font-medium">{student.name}</div>
                     <div className="text-sm text-gray-500">{student.email}</div>
                   </label>
